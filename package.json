@@ -1,0 +1,27 @@
+{
+  "name": "requesthub",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,green \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build -w server && npm run build -w client",
+    "test": "npm run test -w server",
+    "lint": "npm run lint -w server && npm run lint -w client",
+    "e2e": "npx playwright test",
+    "e2e:ui": "npx playwright test --ui",
+    "db:migrate": "npx prisma migrate deploy",
+    "db:seed": "npx prisma db seed",
+    "db:reset": "npx prisma migrate reset --force"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "concurrently": "^9.1.2"
+  },
+  "prisma": {
+    "schema": "server/prisma/schema.prisma",
+    "seed": "npx tsx server/prisma/seed.ts"
+  }
+}

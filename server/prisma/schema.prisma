@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  REVIEWER
+  REQUESTER
+}
+
+enum Priority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum Category {
+  FRONTEND
+  BACKEND
+  INFRASTRUCTURE
+  DATA
+}
+
+enum Status {
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  IN_PROGRESS
+  DONE
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String
+  password  String
+  role      Role      @default(REQUESTER)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  requests  Request[] @relation("requester")
+  assigned  Request[] @relation("assignee")
+  comments  Comment[]
+
+  @@map("users")
+}
+
+model Request {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  priority    Priority
+  category    Category
+  status      Status   @default(SUBMITTED)
+
+  requesterId String   @map("requester_id")
+  requester   User     @relation("requester", fields: [requesterId], references: [id])
+
+  assigneeId  String?  @map("assignee_id")
+  assignee    User?    @relation("assignee", fields: [assigneeId], references: [id])
+
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  comments    Comment[]
+
+  @@map("requests")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  body      String
+  requestId String   @map("request_id")
+  request   Request  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  authorId  String   @map("author_id")
+  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("comments")
+}
