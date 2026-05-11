@@ -7,7 +7,7 @@ test.describe("Request Management", () => {
   });
 
   test("should create a new feature request", async ({ page }) => {
-    await page.getByText("New Request").click();
+    await page.getByRole("link", { name: "+ New Request" }).click();
     await page.getByLabel("Title").fill("Automated test request");
     await page.getByLabel("Description").fill("This is a test request created by Playwright.");
     await page.locator("#priority").selectOption("HIGH");
@@ -20,7 +20,7 @@ test.describe("Request Management", () => {
   });
 
   test("should submit a request with Data category", async ({ page }) => {
-    await page.getByText("New Request").click();
+    await page.getByRole("link", { name: "+ New Request" }).click();
     await page.getByLabel("Title").fill("Data pipeline optimization");
     await page.getByLabel("Description").fill("Need to optimize the ETL pipeline for faster data processing.");
     await page.locator("#priority").selectOption("MEDIUM");
@@ -37,7 +37,7 @@ test.describe("Request Management", () => {
   }) => {
     // Find a submitted request
     await page.locator("#status-filter").selectOption("SUBMITTED");
-    await page.getByText("Add dark mode support").click();
+    await page.getByRole("link", { name: "Add dark mode support" }).click();
 
     // Transition it
     await page.getByRole("button", { name: "Start Review" }).click();
@@ -45,7 +45,7 @@ test.describe("Request Management", () => {
   });
 
   test("should add a comment to a request", async ({ page }) => {
-    await page.getByText("Add dark mode support").click();
+    await page.getByRole("link", { name: "Add dark mode support" }).click();
     await page.getByPlaceholder("Add a comment").fill("Looks good, let's prioritize this.");
     await page.getByRole("button", { name: "Comment" }).click();
     await expect(
