@@ -28,12 +28,12 @@ const STATUS_LABELS: Record<string, string> = {
 export default function DashboardPage() {
   const { user } = useAuth();
   const [requests, setRequests] = useState<RequestItem[]>([]);
+  const [criticalCount, setCriticalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [sortBy, setSortBy] = useState("newest");
-  const [criticalCount, setCriticalCount] = useState<number>(0);
 
   useEffect(() => {
     const params: Record<string, string> = {};
@@ -51,18 +51,19 @@ export default function DashboardPage() {
   }, [statusFilter, priorityFilter, categoryFilter, sortBy]);
 
   useEffect(() => {
-    api
-      .listRequests({ priority: 'CRITICAL', status: 'SUBMITTED' })
-      .then((res) => setCriticalCount(res.length))
-      .catch(console.error);
-  }, []);
+    if (user?.role === 'ADMIN') {
+      api.listRequests({ priority: 'CRITICAL', status: 'SUBMITTED' })
+        .then((items) => setCriticalCount(items.length))
+        .catch(console.error);
+    }
+  }, [user]);
 
   return (
     <div>
       {user?.role === 'ADMIN' && criticalCount > 0 && (
         <div
           data-testid="critical-banner"
-          className="bg-amber-50 border border-amber-400 text-amber-800 px-4 py-3 rounded mb-6 flex items-center gap-2"
+          className="mb-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-amber-800"
         >
           ⚠️ {criticalCount} critical request(s) awaiting review
         </div>
