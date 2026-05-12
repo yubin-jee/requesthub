@@ -7,7 +7,7 @@ import PriorityBadge from "../components/PriorityBadge";
 
 const VALID_TRANSITIONS: Record<string, string[]> = {
   SUBMITTED: ["UNDER_REVIEW"],
-  UNDER_REVIEW: ["APPROVED"],
+  UNDER_REVIEW: ["APPROVED", "REJECTED"],
   APPROVED: ["IN_PROGRESS"],
   IN_PROGRESS: ["DONE"],
   REJECTED: [],
@@ -150,7 +150,7 @@ export default function RequestDetailPage() {
                 <button
                   key={status}
                   onClick={() => handleTransition(status)}
-                  disabled={transitioning === status}
+                  disabled={!!transitioning}
                   className={`px-3 py-1.5 text-sm font-medium rounded-md ${
                     status === "REJECTED"
                       ? "bg-red-50 text-red-700 hover:bg-red-100"
