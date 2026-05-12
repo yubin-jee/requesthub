@@ -31,6 +31,13 @@ export default function DashboardPage() {
   const [priorityFilter, setPriorityFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+  const [criticalPendingCount, setCriticalPendingCount] = useState(0);
+
+  useEffect(() => {
+    api.getCriticalPendingCount()
+      .then((data) => setCriticalPendingCount(data.count))
+      .catch(console.error);
+  }, []);
 
   useEffect(() => {
     const params: Record<string, string> = {};
@@ -58,6 +65,20 @@ export default function DashboardPage() {
           + New Request
         </Link>
       </div>
+
+      {criticalPendingCount > 0 && (
+        <div
+          data-testid="critical-banner"
+          className="bg-amber-50 border border-amber-400 text-amber-800 px-4 py-3 rounded-md mb-6 flex items-center gap-2"
+        >
+          <span className="text-lg">⚠️</span>
+          <span>
+            There {criticalPendingCount === 1 ? "is" : "are"}{" "}
+            <strong>{criticalPendingCount}</strong> critical request
+            {criticalPendingCount === 1 ? "" : "s"} awaiting review
+          </span>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow p-4 mb-6">

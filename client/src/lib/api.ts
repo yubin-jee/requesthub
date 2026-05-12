@@ -41,6 +41,9 @@ export const api = {
     return request<RequestItem[]>(`/requests${qs}`);
   },
 
+  getCriticalPendingCount: () =>
+    request<{ count: number }>("/requests/critical-pending"),
+
   getRequest: (id: string) => request<RequestDetail>(`/requests/${id}`),
 
   createRequest: (data: CreateRequestData) =>
