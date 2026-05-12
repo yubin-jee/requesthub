@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { login } from "./helpers";
 
-test.describe("Critical Request Banner", () => {
+test.describe("Admin Critical Banner", () => {
   test("should display critical banner for admin user", async ({ page }) => {
-    await login(page, "admin@requesthub.dev", "admin123");
+    await login(page);
     const banner = page.getByTestId("critical-banner");
     await expect(banner).toBeVisible();
     await expect(banner).toContainText("critical request(s) awaiting review");
