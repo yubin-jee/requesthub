@@ -181,6 +181,17 @@ async function main() {
         requesterId: admin.id,
       },
     }),
+    prisma.request.create({
+      data: {
+        title: "Emergency security patch for authentication bypass",
+        description:
+          "A critical vulnerability has been discovered in the authentication module that allows unauthorized access. Immediate patch required.",
+        priority: Priority.CRITICAL,
+        category: Category.BACKEND,
+        status: Status.SUBMITTED,
+        requesterId: requester.id,
+      },
+    }),
   ]);
 
   // Add comments to some requests
