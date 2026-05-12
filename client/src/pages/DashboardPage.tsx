@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { api, type RequestItem } from "../lib/api";
 import StatusBadge from "../components/StatusBadge";
 import PriorityBadge from "../components/PriorityBadge";
+import { useAuth } from "../context/AuthContext";
 
 const STATUSES = [
   "",
@@ -31,6 +32,8 @@ export default function DashboardPage() {
   const [priorityFilter, setPriorityFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+  const { user } = useAuth();
+  const [criticalCount, setCriticalCount] = useState(0);
 
   useEffect(() => {
     const params: Record<string, string> = {};
@@ -47,8 +50,25 @@ export default function DashboardPage() {
       .finally(() => setLoading(false));
   }, [statusFilter, priorityFilter, categoryFilter, sortBy]);
 
+  useEffect(() => {
+    if (user?.role === "ADMIN") {
+      api
+        .listRequests({ priority: "CRITICAL", status: "SUBMITTED" })
+        .then((data) => setCriticalCount(data.length))
+        .catch(console.error);
+    }
+  }, [user]);
+
   return (
     <div>
+      {user?.role === "ADMIN" && criticalCount > 0 && (
+        <div
+          data-testid="critical-banner"
+          className="mb-6 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-amber-800"
+        >
+          ⚠️ {criticalCount} critical request(s) awaiting review
+        </div>
+      )}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Feature Requests</h1>
         <Link
