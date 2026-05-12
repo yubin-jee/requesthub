@@ -7,7 +7,7 @@ import PriorityBadge from "../components/PriorityBadge";
 
 const VALID_TRANSITIONS: Record<string, string[]> = {
   SUBMITTED: ["UNDER_REVIEW"],
-  UNDER_REVIEW: ["APPROVED"],
+  UNDER_REVIEW: ["APPROVED", "REJECTED"],
   APPROVED: ["IN_PROGRESS"],
   IN_PROGRESS: ["DONE"],
   REJECTED: [],
