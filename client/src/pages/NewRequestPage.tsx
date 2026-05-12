@@ -117,7 +117,7 @@ export default function NewRequestPage() {
               <option value="FRONTEND">Frontend</option>
               <option value="BACKEND">Backend</option>
               <option value="INFRASTRUCTURE">Infrastructure</option>
-              {/* BUG: "Data" option is missing here but the backend supports it */}
+              <option value="DATA">Data</option>
             </select>
           </div>
         </div>
