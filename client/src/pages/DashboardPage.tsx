@@ -33,7 +33,7 @@ export default function DashboardPage() {
   const [priorityFilter, setPriorityFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [sortBy, setSortBy] = useState("newest");
-  const [criticalCount, setCriticalCount] = useState(0);
+  const [criticalCount, setCriticalCount] = useState<number>(0);
 
   useEffect(() => {
     const params: Record<string, string> = {};
@@ -51,24 +51,18 @@ export default function DashboardPage() {
   }, [statusFilter, priorityFilter, categoryFilter, sortBy]);
 
   useEffect(() => {
-    if (user?.role !== 'ADMIN') return;
     api
-      .listRequests({})
-      .then((all) => {
-        const count = all.filter(
-          (r) => r.priority === 'CRITICAL' && r.status === 'SUBMITTED'
-        ).length;
-        setCriticalCount(count);
-      })
+      .listRequests({ priority: 'CRITICAL', status: 'SUBMITTED' })
+      .then((res) => setCriticalCount(res.length))
       .catch(console.error);
-  }, [user]);
+  }, []);
 
   return (
     <div>
       {user?.role === 'ADMIN' && criticalCount > 0 && (
         <div
           data-testid="critical-banner"
-          className="mb-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-amber-800"
+          className="bg-amber-50 border border-amber-400 text-amber-800 px-4 py-3 rounded mb-6 flex items-center gap-2"
         >
           ⚠️ {criticalCount} critical request(s) awaiting review
         </div>
