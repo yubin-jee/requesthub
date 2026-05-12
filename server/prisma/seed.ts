@@ -181,6 +181,17 @@ async function main() {
         requesterId: admin.id,
       },
     }),
+    prisma.request.create({
+      data: {
+        title: "Emergency security patch for auth bypass",
+        description:
+          "A critical authentication bypass vulnerability was discovered in the login flow. Attackers can skip MFA under certain conditions. Needs immediate remediation.",
+        priority: Priority.CRITICAL,
+        category: Category.BACKEND,
+        status: Status.SUBMITTED,
+        requesterId: requester.id,
+      },
+    }),
   ]);
 
   // Add comments to some requests
@@ -220,7 +231,7 @@ async function main() {
   });
 
   console.log("Seed complete:");
-  console.log(`  - ${3} users`);
+  console.log(`  - 3 users`);
   console.log(`  - ${requests.length} requests`);
   console.log(`  - 6 comments`);
 }

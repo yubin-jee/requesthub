@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, type RequestItem } from "../lib/api";
+import { useAuth } from "../context/AuthContext";
 import StatusBadge from "../components/StatusBadge";
 import PriorityBadge from "../components/PriorityBadge";
 
@@ -25,12 +26,21 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export default function DashboardPage() {
+  const { user } = useAuth();
   const [requests, setRequests] = useState<RequestItem[]>([]);
+  const [allRequests, setAllRequests] = useState<RequestItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+
+  useEffect(() => {
+    api
+      .listRequests()
+      .then(setAllRequests)
+      .catch(console.error);
+  }, []);
 
   useEffect(() => {
     const params: Record<string, string> = {};
@@ -47,8 +57,21 @@ export default function DashboardPage() {
       .finally(() => setLoading(false));
   }, [statusFilter, priorityFilter, categoryFilter, sortBy]);
 
+  const criticalSubmitted = allRequests.filter(
+    (r) => r.priority === "CRITICAL" && r.status === "SUBMITTED",
+  );
+
   return (
     <div>
+      {user?.role === "ADMIN" && criticalSubmitted.length > 0 && (
+        <div
+          data-testid="critical-banner"
+          className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded mb-6 font-medium"
+        >
+          ⚠️ {criticalSubmitted.length} critical request(s) awaiting review
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Feature Requests</h1>
         <Link
