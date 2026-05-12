@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, type RequestItem } from "../lib/api";
+import { useAuth } from "../context/AuthContext";
 import StatusBadge from "../components/StatusBadge";
 import PriorityBadge from "../components/PriorityBadge";
 
@@ -25,12 +26,14 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export default function DashboardPage() {
+  const { user } = useAuth();
   const [requests, setRequests] = useState<RequestItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+  const [criticalCount, setCriticalCount] = useState<number>(0);
 
   useEffect(() => {
     const params: Record<string, string> = {};
@@ -47,8 +50,23 @@ export default function DashboardPage() {
       .finally(() => setLoading(false));
   }, [statusFilter, priorityFilter, categoryFilter, sortBy]);
 
+  useEffect(() => {
+    api
+      .listRequests({ priority: 'CRITICAL', status: 'SUBMITTED' })
+      .then((res) => setCriticalCount(res.length))
+      .catch(console.error);
+  }, []);
+
   return (
     <div>
+      {user?.role === 'ADMIN' && criticalCount > 0 && (
+        <div
+          data-testid="critical-banner"
+          className="bg-amber-50 border border-amber-400 text-amber-800 px-4 py-3 rounded mb-6 flex items-center gap-2"
+        >
+          ⚠️ {criticalCount} critical request(s) awaiting review
+        </div>
+      )}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Feature Requests</h1>
         <Link
