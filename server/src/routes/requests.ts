@@ -37,6 +37,17 @@ const VALID_TRANSITIONS: Record<Status, Status[]> = {
   DONE: [],
 };
 
+// Count critical requests in SUBMITTED status
+requestsRouter.get("/critical-pending", async (_req, res) => {
+  const count = await prisma.request.count({
+    where: {
+      priority: "CRITICAL",
+      status: "SUBMITTED",
+    },
+  });
+  res.json({ count });
+});
+
 // List requests
 requestsRouter.get("/", async (req, res) => {
   const { status, priority, category, sort } = req.query;

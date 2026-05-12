@@ -181,6 +181,17 @@ async function main() {
         requesterId: admin.id,
       },
     }),
+    prisma.request.create({
+      data: {
+        title: "Emergency security vulnerability patch",
+        description:
+          "Critical CVE found in authentication module. Immediate patch required to prevent unauthorized access. All production instances affected.",
+        priority: Priority.CRITICAL,
+        category: Category.BACKEND,
+        status: Status.SUBMITTED,
+        requesterId: requester.id,
+      },
+    }),
   ]);
 
   // Add comments to some requests
@@ -220,7 +231,7 @@ async function main() {
   });
 
   console.log("Seed complete:");
-  console.log(`  - ${3} users`);
+  console.log(`  - 3 users`);
   console.log(`  - ${requests.length} requests`);
   console.log(`  - 6 comments`);
 }
