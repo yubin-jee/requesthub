@@ -181,6 +181,17 @@ async function main() {
         requesterId: admin.id,
       },
     }),
+    prisma.request.create({
+      data: {
+        title: "Emergency: Production API gateway failing",
+        description:
+          "The main API gateway is intermittently returning 502 errors. Affecting approximately 15% of all API calls. Need immediate investigation and fix.",
+        priority: Priority.CRITICAL,
+        category: Category.INFRASTRUCTURE,
+        status: Status.SUBMITTED,
+        requesterId: requester.id,
+      },
+    }),
   ]);
 
   // Add comments to some requests
