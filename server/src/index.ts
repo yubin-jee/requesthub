@@ -5,6 +5,7 @@ import { authRouter } from "./routes/auth.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
+app.disable("x-powered-by");
 const PORT = process.env.PORT || 3001;
 
 app.use(cors({ origin: true, credentials: true }));
