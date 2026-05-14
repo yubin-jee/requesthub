@@ -24,12 +24,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: lint-and-build
 
+    env:
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+
     services:
       postgres:
         image: postgres:16-alpine
         env:
           POSTGRES_USER: requesthub
-          POSTGRES_PASSWORD: requesthub
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: requesthub
         ports:
           - 5432:5432
@@ -51,28 +54,31 @@ jobs:
       - name: Run database migrations
         run: npx prisma migrate deploy
         env:
-          DATABASE_URL: postgresql://requesthub:requesthub@localhost:5432/requesthub
+          DATABASE_URL: postgresql://requesthub:${{ env.POSTGRES_PASSWORD }}@localhost:5432/requesthub
 
       - name: Seed database
         run: npx prisma db seed
         env:
-          DATABASE_URL: postgresql://requesthub:requesthub@localhost:5432/requesthub
+          DATABASE_URL: postgresql://requesthub:${{ env.POSTGRES_PASSWORD }}@localhost:5432/requesthub
 
       - name: Run unit tests
         run: npm run test
         env:
-          DATABASE_URL: postgresql://requesthub:requesthub@localhost:5432/requesthub
+          DATABASE_URL: postgresql://requesthub:${{ env.POSTGRES_PASSWORD }}@localhost:5432/requesthub
 
   e2e:
     runs-on: ubuntu-latest
     needs: lint-and-build
+
+    env:
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
 
     services:
       postgres:
         image: postgres:16-alpine
         env:
           POSTGRES_USER: requesthub
-          POSTGRES_PASSWORD: requesthub
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: requesthub
         ports:
           - 5432:5432
@@ -97,17 +103,17 @@ jobs:
       - name: Run database migrations
         run: npx prisma migrate deploy
         env:
-          DATABASE_URL: postgresql://requesthub:requesthub@localhost:5432/requesthub
+          DATABASE_URL: postgresql://requesthub:${{ env.POSTGRES_PASSWORD }}@localhost:5432/requesthub
 
       - name: Seed database
         run: npx prisma db seed
         env:
-          DATABASE_URL: postgresql://requesthub:requesthub@localhost:5432/requesthub
+          DATABASE_URL: postgresql://requesthub:${{ env.POSTGRES_PASSWORD }}@localhost:5432/requesthub
 
       - name: Run Playwright tests
         run: npx playwright test
         env:
-          DATABASE_URL: postgresql://requesthub:requesthub@localhost:5432/requesthub
+          DATABASE_URL: postgresql://requesthub:${{ env.POSTGRES_PASSWORD }}@localhost:5432/requesthub
           CI: true
 
       - uses: actions/upload-artifact@v4
