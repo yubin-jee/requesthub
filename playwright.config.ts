@@ -25,9 +25,9 @@ export default defineConfig({
       port: 3001,
       reuseExistingServer: !process.env.CI,
       env: {
-        DATABASE_URL:
-          process.env.DATABASE_URL ||
-          "postgresql://requesthub:requesthub@localhost:5432/requesthub",
+        ...(process.env.DATABASE_URL
+          ? { DATABASE_URL: process.env.DATABASE_URL }
+          : {}),
       },
     },
     {
